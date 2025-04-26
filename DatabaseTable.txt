@@ -1,0 +1,59 @@
+host: "localhost",
+user: "root",
+password: "",
+database: "HRM"
+/////////////////////////////////////////////////////////////////////////////////////////
+
+CREATE TABLE Employee (
+    UserID VARCHAR(50) NOT NULL PRIMARY KEY,
+    Password VARCHAR(255) NOT NULL,
+    Role VARCHAR(50) NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    Salary DECIMAL(10,2),
+    Date_of_Birth DATE,
+    Department VARCHAR(50),
+    Joining_Date DATE,
+    CONSTRAINT chk_salary_non_negative CHECK (Salary >= 0),
+    CONSTRAINT chk_valid_roles CHECK (Role IN ('admin', 'supervisor', 'contractual_worker', 'general_worker'))
+);
+
+INSERT INTO Employee (UserID, Password, Role, Name, Salary, Date_of_Birth, Department, Joining_Date) VALUES
+('AD001', 'qwer1234', 'admin', 'The Rock', 43654765.00, NULL, NULL, NULL),
+('AD002', 'qwer1234', 'admin', 'Jone Wick', 465467.00, NULL, NULL, NULL),
+('CW001', 'qwer1234', 'contractual_worker', 'Salman Khan', 6756756.00, NULL, NULL, NULL),
+('GW001', 'qwer1234', 'general_worker', 'Amir Khan', 0.00, NULL, NULL, NULL),
+('SU001', 'qwer1234', 'supervisor', 'Mike Tyson', 7846657.00, NULL, NULL, NULL),
+('SU002', 'qwer1234', 'supervisor', 'Bruce Lee', 1223345.00, NULL, NULL, NULL);
+
+
+CREATE TABLE OvertimeRequest (
+    Overtime_id INT AUTO_INCREMENT PRIMARY KEY,
+    UserID VARCHAR(50)  NOT NULL,
+    Hours DECIMAL(5,2) NOT NULL,
+    Date DATE NOT NULL,
+    request_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    FOREIGN KEY (UserID) REFERENCES Employee(UserID) ON DELETE CASCADE
+) ;
+
+CREATE TABLE LeaveRequest (
+    Leave_id INT AUTO_INCREMENT PRIMARY KEY,
+    UserID VARCHAR(50) NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NOT NULL,
+    No_of_Days INT NOT NULL,
+    request_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Reason TEXT,
+    Status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    FOREIGN KEY (UserID) REFERENCES Employee(UserID) ON DELETE CASCADE,
+    CONSTRAINT chk_valid_dates CHECK (EndDate >= StartDate),
+    CONSTRAINT chk_positive_days CHECK (No_of_Days > 0)
+);
+
+
+
+
+
+
+
+
